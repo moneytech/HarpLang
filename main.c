@@ -1,14 +1,14 @@
-#include "tests.c"
 
 #include <stdio.h>
 
+#include "tests.h"
 #include "harp.h"
 #include "lexer.h"
 
 int main() {
-    printf("Harp programming language, Version: %s\n", HARP_VERSION);
+    harp_run_all_tests();
 
-    harp_lexer_t lex = harp_create_lexer("Hello", 5);
+    printf("Harp programming language, Version: %s\n", HARP_VERSION);
 
     return 0;
 }
