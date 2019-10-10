@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(Harp)
 
 set(CMAKE_C_COMPILER "gcc")
-
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers")
 set(CMAKE_C_FLAGS_DEBUG "-ggdb")
