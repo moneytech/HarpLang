@@ -123,6 +123,33 @@ Harp.exe/fast:
 	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/build
 .PHONY : Harp.exe/fast
 
+lexer.o: lexer.c.o
+
+.PHONY : lexer.o
+
+# target to build an object file
+lexer.c.o:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/lexer.c.o
+.PHONY : lexer.c.o
+
+lexer.i: lexer.c.i
+
+.PHONY : lexer.i
+
+# target to preprocess a source file
+lexer.c.i:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/lexer.c.i
+.PHONY : lexer.c.i
+
+lexer.s: lexer.c.s
+
+.PHONY : lexer.s
+
+# target to generate assembly for a file
+lexer.c.s:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/lexer.c.s
+.PHONY : lexer.c.s
+
 main.o: main.c.o
 
 .PHONY : main.o
@@ -150,6 +177,33 @@ main.c.s:
 	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/main.c.s
 .PHONY : main.c.s
 
+tests.o: tests.c.o
+
+.PHONY : tests.o
+
+# target to build an object file
+tests.c.o:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/tests.c.o
+.PHONY : tests.c.o
+
+tests.i: tests.c.i
+
+.PHONY : tests.i
+
+# target to preprocess a source file
+tests.c.i:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/tests.c.i
+.PHONY : tests.c.i
+
+tests.s: tests.c.s
+
+.PHONY : tests.s
+
+# target to generate assembly for a file
+tests.c.s:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/tests.c.s
+.PHONY : tests.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -159,9 +213,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Harp.exe"
 	@echo "... edit_cache"
+	@echo "... lexer.o"
+	@echo "... lexer.i"
+	@echo "... lexer.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... tests.o"
+	@echo "... tests.i"
+	@echo "... tests.s"
 .PHONY : help
 
 

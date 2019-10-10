@@ -18,4 +18,6 @@ include_directories(include/)
 link_libraries(X11 dl pthread m)
 
 add_executable(Harp.exe
+	tests.c
+	lexer.c
         main.c)
