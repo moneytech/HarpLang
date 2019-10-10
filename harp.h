@@ -1,0 +1,9 @@
+#ifndef HARP_H
+#define HARP_H
+
+#define HARP_VERSION_MINOR "1"
+#define HARP_VERSION_MAJOR "0"
+#define HARP_RELEASE "0"
+#define HARP_VERSION (HARP_RELEASE "." HARP_VERSION_MAJOR "." HARP_VERSION_MINOR)
+
+#endif//HARP_H

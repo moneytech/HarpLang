@@ -1,1 +1,1 @@
-# HarpLang
+# The Harp Programming Language
