@@ -1,0 +1,86 @@
+#include "ast.h"
+
+/*
+<s_expression>  ::= <atomic_symbol>
+                  | "(" <s_expression> "." <s_expression> ")"
+                  | <list> .
+<_list>         ::= <s_expression> <_list>
+                  | <s_expression> .
+<list>          ::= "(" <s_expression> <_list> ")" .
+<atomic_symbol> ::= <letter> <atom_part> .
+<atom_part>     ::= <empty> | <letter> <atom_part> | <number> <atom_part> .
+<letter>        ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
+                  | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t"
+                  | "u" | "v" | "w" | "x" | "y" | "z" .
+<number>        ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" .
+<empty>         ::= " ".
+*/
+
+harp_str_t get_str_from_tok(harp_tok_t* tok) {
+    harp_str_t result;
+    result.data = malloc(tok->end-tok->start+1);
+    result.len = tok->end-tok->start;
+    strncpy(result.data, tok->start, tok->end-tok->start);
+    result.data[result.len] = '\0';
+    return result;
+}
+
+harp_node_t* parse_s_expr(harp_lexer_t* lex) {
+    harp_tok_t tok = harp_get_tok(lex);
+    if (tok.type != TT_EOF) {
+        switch(tok.type) {
+            case TT_ATOM: {
+                harp_node_t* result = malloc(sizeof(result));
+                if (!result) return NULL;
+                result->type = TT_ATOM;
+                result->value.atom = get_str_from_tok(&tok);
+                return result;
+            }
+            case TT_NUMBER: {
+                harp_node_t* result = malloc(sizeof(result));
+                if (!result) return NULL;
+                result->type = TT_NUMBER;
+                char buff[256] = {'\0'};
+                sprintf(buff, "%.*s", (int)(tok.end-tok.start), tok.start);
+                result->value.number = atof(buff);
+                return result;
+            }
+            case TT_OPEN_BRACKET: {}
+            case TT_CLOSE_BRACKET: {}
+            case TT_OPEN_PAREN: {
+                harp_node_t* result = malloc(sizeof(harp_node_t));
+                if (!result) return NULL;
+
+                harp_node_t* lst = NULL;
+                harp_node_t* fst = NULL;
+            }
+            case TT_CLOSE_PAREN: {
+                return NULL;
+            }
+            default:
+                printf("Unhandled token type %s\n", harp_token_type_names[tok.type]);
+                break;
+        }
+    }
+    return NULL;
+}
+
+harp_node_t* harp_get_node(harp_lexer_t* lex) {
+    harp_node_t* result = malloc(sizeof(harp_node_t*));
+    if (!result) return NULL; //TODO(Dustin): @ThrowError
+
+    result->type = NT_LIST;
+
+    harp_node_t* next = result;
+    next->child = parse_s_expr(lex);
+    next = next->child;
+
+    while (1) {
+        harp_node_t* val = parse_s_expr(lex);
+        if (!val || lex->it == lex->end) break;
+        next->next = val;
+        next = next->next;
+    }
+
+    return result;
+}

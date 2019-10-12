@@ -4,6 +4,7 @@
 #include "tests.h"
 #include "harp.h"
 #include "lexer.h"
+#include "ast.h"
 
 int main() {
     harp_run_all_tests();

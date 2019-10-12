@@ -19,5 +19,6 @@ link_libraries(X11 dl pthread m)
 
 add_executable(Harp.exe
 	tests.c
+	ast.c
 	lexer.c
         main.c)
