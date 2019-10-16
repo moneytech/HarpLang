@@ -188,29 +188,72 @@ bool interp_progn_test(char* os) {
 }
 
 bool interp_expr_test(char* os) {
+    {
+        char buff[] = "(+ 3 2)";
+        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        if (!result) {
+            sprintf(os+strlen(os), "Add failed");
+            return false;
+        }
+        if (result->type != NT_REAL_LITERAL) {
+            sprintf(os+strlen(os), "Add failed");
+            return false;
+        }
+        if (result->value.number != (3.0 + 2.0)){
+            sprintf(os+strlen(os), "Add failed");
+            return false;
+        }
+    }
 
     {
-        char buff[] = "(+ (+ 1 2) 3)";
+        char buff[] = "(- 3 2)";
         harp_node_t* result = harp_eval_expr(buff, strlen(buff));
-        if (!result) return false;
-        if (result->type != NT_REAL_LITERAL) return false;
-        if (result->value.number != (1 + 2 + 3)) return false;
+        if (!result) {
+            sprintf(os+strlen(os), "Sub failed");
+            return false;
+        }
+        if (result->type != NT_REAL_LITERAL) {
+            sprintf(os+strlen(os), "Sub failed");
+            return false;
+        }
+        if (result->value.number != (3.0 - 2.0)){
+            sprintf(os+strlen(os), "Sub failed");
+            return false;
+        }
     }
 
     {
         char buff[] = "(* 3 2)";
         harp_node_t* result = harp_eval_expr(buff, strlen(buff));
-        if (!result) return false;
-        if (result->type != NT_REAL_LITERAL) return false;
-        if (result->value.number != (3 * 2)) return false;
+        if (!result) {
+            sprintf(os+strlen(os), "Mul failed");
+            return false;
+        }
+        if (result->type != NT_REAL_LITERAL) {
+            sprintf(os+strlen(os), "Mul failed");
+            return false;
+        }
+        if (result->value.number != (3.0 * 2.0)){
+            sprintf(os+strlen(os), "Mul failed");
+            return false;
+        }
     }
 
     {
         char buff[] = "(/ 3 2)";
         harp_node_t* result = harp_eval_expr(buff, strlen(buff));
-        if (!result) return false;
-        if (result->type != NT_REAL_LITERAL) return false;
-        if (result->value.number != (1 / 2)) return false;
+        if (!result) {
+            sprintf(os+strlen(os), "Div failed");
+            return false;
+        }
+        if (result->type != NT_REAL_LITERAL) {
+            sprintf(os+strlen(os), "Div failed");
+            return false;
+        }
+        if (result->value.number != (3.0 / 2.0)){
+            sprintf(os+strlen(os), "Div failed");
+            return false;
+        }
     }
 
     return true;
@@ -233,13 +276,14 @@ void harp_run_all_tests() {
         DEF_TEST(ast_basic_value_test),
         DEF_TEST(ast_basic_s_expr_test),
         DEF_TEST(interp_basic_value),
-        DEF_TEST(interp_progn_test),
+        //DEF_TEST(interp_progn_test),
         DEF_TEST(interp_expr_test),
     };
     #undef DEF_TEST
 
     size_t n_tests = (sizeof(tests) / sizeof(tests[0]));
     size_t succ = 0;
+    char final_output[2048];
 
     for (size_t i = 0; i < n_tests; i++) {
         char buffer[512] = { [0] = '\0' };
@@ -252,19 +296,23 @@ void harp_run_all_tests() {
             ? "\033[32;1m"
             : "\033[31;1m";
 
-        printf("[%d] <%s> test: %s[%s]\033[m\n",
+        sprintf(final_output+strlen(final_output), "[%d] <%s> test: %s[%s]\033[m\n",
                (int)i + 1,
                tests[i].name,
                color,
                status);
-        printf("\033[36m%s\033[m", buffer);
+        sprintf(final_output+strlen(final_output), "\033[36m%s\033[m", buffer);
     }
 
     bool passed = (n_tests == succ);
 
-    printf("Harp tests [%s] (%d/%d) (%d%%)\n",
+    sprintf(final_output+strlen(final_output), "Harp tests [%s] (%d/%d) (%d%%)\n",
            (passed?"Passed":"Failed"),
            (int)succ,
            (int)n_tests,
            (int)((((float)succ)/(float)n_tests) * 100));
+
+    if (!passed) {
+        printf("%s\n", final_output);
+    }
 }
