@@ -3,6 +3,15 @@
 harp_node_t* eval_expr(harp_node_t* node);
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args);
 
+harp_node_t* harp_car(harp_node_t* list) {
+    return list->child;
+}
+
+harp_node_t* harp_cdr(harp_node_t* list) {
+    return list->child->next;
+}
+
+
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
     // We have next->next
     atom = eval_expr(atom);
@@ -31,14 +40,14 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
             }
             case '-': {
                 double acc = 0.0;
-                bool fst = false;
+                bool fst = true;
                 while (args) {
                     harp_node_t* a = args;
                     if (args->type == NT_EXPRESSION || args->type == NT_PROGN)
                         a = eval_expr(args);
                     if (a->type != NT_REAL_LITERAL)
                         printf("cannot minus a non numaric type %s\n", harp_node_type_names[args->type]);
-                    if (!fst) acc += a->value.number;
+                    if (!fst) acc -= a->value.number;
                     else { fst = false; acc = a->value.number; }
                     args = args->next;
                 }
@@ -63,7 +72,7 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
             }
             case '/': {
                 double acc = 0.0;
-                bool fst = false;
+                bool fst = true;
                 while (args) {
                     harp_node_t* a = args;
                     if (args->type == NT_EXPRESSION || args->type == NT_PROGN)

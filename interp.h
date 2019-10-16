@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+harp_node_t* harp_car(harp_node_t* list);
+harp_node_t* harp_cdr(harp_node_t* list);
 harp_node_t* harp_eval_expr(char* buff, size_t len);
 
 #endif//HARP_INTERP_H
