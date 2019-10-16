@@ -17,7 +17,8 @@
     X(NT_ATOM)\
     X(NT_C_FUNCTION)\
     X(NT_LAMBDA)\
-    X(NT_PROGN)
+    X(NT_PROGN)\
+    X(NT_NONE)
 
 enum harp_node_types {
 #define X(Enum) Enum,
@@ -49,6 +50,7 @@ typedef struct harp_node_t {
     struct harp_node_t *child, *next;
 } harp_node_t;
 
+harp_node_t* harp_new_node(int type);
 harp_node_t* harp_get_node(harp_lexer_t* lex);
 
 #endif//HARP_AST_H

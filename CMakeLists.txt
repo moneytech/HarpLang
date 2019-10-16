@@ -21,4 +21,5 @@ add_executable(Harp.exe
 	tests.c
 	ast.c
 	lexer.c
+	interp.c
         main.c)

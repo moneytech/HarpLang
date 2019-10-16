@@ -79,11 +79,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
 }
 
 harp_node_t* harp_get_node(harp_lexer_t* lex) {
-    harp_node_t* result = malloc(sizeof(harp_node_t*));
-    if (!result) return NULL; //TODO(Dustin): @ThrowError
-
-    result->type = NT_LIST;
-
+    harp_node_t* result = harp_new_node(NT_LIST);
     harp_node_t* next = result;
     next->child = parse_s_expr(lex);
     next = next->child;

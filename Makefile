@@ -150,6 +150,33 @@ ast.c.s:
 	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/ast.c.s
 .PHONY : ast.c.s
 
+interp.o: interp.c.o
+
+.PHONY : interp.o
+
+# target to build an object file
+interp.c.o:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/interp.c.o
+.PHONY : interp.c.o
+
+interp.i: interp.c.i
+
+.PHONY : interp.i
+
+# target to preprocess a source file
+interp.c.i:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/interp.c.i
+.PHONY : interp.c.i
+
+interp.s: interp.c.s
+
+.PHONY : interp.s
+
+# target to generate assembly for a file
+interp.c.s:
+	$(MAKE) -f CMakeFiles/Harp.exe.dir/build.make CMakeFiles/Harp.exe.dir/interp.c.s
+.PHONY : interp.c.s
+
 lexer.o: lexer.c.o
 
 .PHONY : lexer.o
@@ -243,6 +270,9 @@ help:
 	@echo "... ast.o"
 	@echo "... ast.i"
 	@echo "... ast.s"
+	@echo "... interp.o"
+	@echo "... interp.i"
+	@echo "... interp.s"
 	@echo "... lexer.o"
 	@echo "... lexer.i"
 	@echo "... lexer.s"

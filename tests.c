@@ -4,6 +4,7 @@
 
 #include "lexer.h"
 #include "ast.h"
+#include "interp.h"
 
 #define ARROW ("└──")
 
@@ -157,6 +158,29 @@ bool ast_basic_s_expr_test(char* os){
     return true;
 }
 
+bool interp_basic_value(char* os) {
+    for (int i = 0; i < 100; i++) {
+        char buff[2];
+        sprintf(buff, "%d", i);
+        harp_node_t* result =
+            harp_eval_expr(buff, strlen(buff));
+
+        if (!result) return false;
+        if (result->type != NT_REAL_LITERAL) return false;
+        if (result->value.number != (double)i) return false;
+    }
+
+    char buff[] = "hello";
+    harp_node_t* result =
+        harp_eval_expr(buff, strlen(buff));
+
+    if (!result) return false;
+    if (result->type != NT_ATOM) return false;
+    if (strcmp(result->value.string.data, buff) != 0) return false;
+
+    return true;
+}
+
 typedef bool (*harp_test_fn)(char* buff);
 
 #ifndef HARP_MACROSTR
@@ -173,6 +197,7 @@ void harp_run_all_tests() {
         DEF_TEST(lexer_atom_test),
         DEF_TEST(ast_basic_value_test),
         DEF_TEST(ast_basic_s_expr_test),
+        DEF_TEST(interp_basic_value),
     };
     #undef DEF_TEST
 
