@@ -35,6 +35,7 @@ harp_tok_t harp_get_tok(harp_lexer_t* lex) {
         case ')': return (harp_tok_t){.type=TT_CLOSE_PAREN, .start=lex->it++, .flags = 0};
         case '[': return (harp_tok_t){.type=TT_OPEN_BRACKET, .start=lex->it++, .flags = 0};
         case ']': return (harp_tok_t){.type=TT_CLOSE_BRACKET, .start=lex->it++, .flags = 0};
+        case '\'': return (harp_tok_t){.type=TT_QUOTE, .start=lex->it++, .flags = 0};
         default: break;
     }
 

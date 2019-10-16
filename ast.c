@@ -19,7 +19,7 @@
 harp_node_t* harp_new_node(int type) {
     harp_node_t* node = malloc(sizeof(harp_node_t));
     if (!node) return NULL;
-
+    node->flags = 0;
     node->next = node->child = NULL;
     node->type = type;
     return node;
@@ -36,11 +36,19 @@ harp_str_t get_str_from_tok(harp_tok_t* tok) {
 
 harp_node_t* parse_s_expr(harp_lexer_t* lex) {
     harp_tok_t tok = harp_get_tok(lex);
+
+    bool quoted = false;
+    if (tok.type == TT_QUOTE) {
+        quoted = true;
+        tok = harp_get_tok(lex);
+    }
+
     if (tok.type != TT_EOF) {
         switch(tok.type) {
             case TT_ATOM: {
                 harp_node_t* result = harp_new_node(NT_ATOM);
                 result->value.atom = get_str_from_tok(&tok);
+                if (quoted) result->flags |= FLAG_QUOTED;
                 return result;
             }
             case TT_NUMBER: {
@@ -48,6 +56,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
                 char buff[256] = {'\0'};
                 sprintf(buff, "%.*s", (int)(tok.end-tok.start), tok.start);
                 result->value.number = atof(buff);
+                if (quoted) result->flags |= FLAG_QUOTED;
                 return result;
             }
             case TT_OPEN_BRACKET: {}
@@ -65,6 +74,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
                     }
                 }
                 result->child = fst;
+                if (quoted) result->flags |= FLAG_QUOTED;
                 return result;
             }
             case TT_CLOSE_PAREN: {

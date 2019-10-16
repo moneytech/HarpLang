@@ -44,8 +44,13 @@ typedef union {
     int boolean;
 } harp_value_u;
 
+enum harp_node_flags {
+    FLAG_QUOTED = 1<<0,
+};
+
 typedef struct harp_node_t {
     int type;
+    int flags;
     harp_value_u value;
     struct harp_node_t *child, *next;
 } harp_node_t;

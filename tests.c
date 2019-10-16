@@ -163,7 +163,7 @@ bool interp_basic_value(char* os) {
         char buff[2];
         sprintf(buff, "%d", i);
         harp_node_t* result =
-            harp_eval_expr(buff, strlen(buff));
+            harp_eval_string(buff, strlen(buff));
 
         if (!result) return false;
         if (result->type != NT_REAL_LITERAL) return false;
@@ -172,7 +172,7 @@ bool interp_basic_value(char* os) {
 
     char buff[] = "hello";
     harp_node_t* result =
-        harp_eval_expr(buff, strlen(buff));
+        harp_eval_string(buff, strlen(buff));
 
     if (!result) return false;
     if (result->type != NT_ATOM) return false;
@@ -190,7 +190,7 @@ bool interp_progn_test(char* os) {
 bool interp_expr_test(char* os) {
     {
         char buff[] = "(+ 3 2)";
-        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        harp_node_t* result = harp_eval_string(buff, strlen(buff));
         if (!result) {
             sprintf(os+strlen(os), "Add failed");
             return false;
@@ -207,7 +207,7 @@ bool interp_expr_test(char* os) {
 
     {
         char buff[] = "(- 3 2)";
-        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        harp_node_t* result = harp_eval_string(buff, strlen(buff));
         if (!result) {
             sprintf(os+strlen(os), "Sub failed");
             return false;
@@ -224,7 +224,7 @@ bool interp_expr_test(char* os) {
 
     {
         char buff[] = "(* 3 2)";
-        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        harp_node_t* result = harp_eval_string(buff, strlen(buff));
         if (!result) {
             sprintf(os+strlen(os), "Mul failed");
             return false;
@@ -241,7 +241,7 @@ bool interp_expr_test(char* os) {
 
     {
         char buff[] = "(/ 3 2)";
-        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        harp_node_t* result = harp_eval_string(buff, strlen(buff));
         if (!result) {
             sprintf(os+strlen(os), "Div failed");
             return false;

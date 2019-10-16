@@ -27,6 +27,7 @@ typedef struct {
         X(TT_CLOSE_BRACKET)                     \
         X(TT_NUMBER)                            \
         X(TT_STRING)                            \
+        X(TT_QUOTE)                             \
         X(TT_EOF)
 
 enum harp_token_types {

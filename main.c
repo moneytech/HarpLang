@@ -7,18 +7,44 @@
 #include "interp.h"
 
 void print_node_as_value(harp_node_t* node) {
-    if (!node) printf("none\n");
+    if (!node) printf("nil");
     switch(node->type) {
         case NT_REAL_LITERAL: {
-            printf("%f\n", node->value.number);
+            printf("%f", node->value.number);
             break;
         }
         case NT_ATOM: {
-            printf("%.*s\n", (int)node->value.string.len, node->value.string.data);
+            printf("%.*s", (int)node->value.string.len, node->value.string.data);
+            break;
+        }
+        case NT_LIST: {
+            harp_node_t* it = harp_car(node);
+            printf("(");
+            while (it) {
+
+                if (node->flags &= FLAG_QUOTED)
+                    it->flags |= FLAG_QUOTED;
+
+                print_node_as_value(it);
+                it = it->next;
+                if (it) { printf(" "); }
+            }
+            printf(")");
+            break;
+        }
+        case NT_EXPRESSION: {
+            if (node->flags &= FLAG_QUOTED) {
+                node->type = NT_LIST;
+                print_node_as_value(node);
+                return;
+            }
+
+            print_node_as_value(harp_eval_expr(node));
+
             break;
         }
         default: {
-            printf("none\n");
+            printf("none::[%s]", harp_node_type_names[node->type]);
             break;
         }
     }
@@ -26,14 +52,15 @@ void print_node_as_value(harp_node_t* node) {
 
 void run_repl() {
     while (1) {
-        printf(">");
+        printf("> ");
         char buff[512];
         fgets(buff, sizeof(buff), stdin);
         if (strcmp(buff, "(exit)") == 0){
             //@HACK
             break;
         }
-        print_node_as_value(harp_eval_expr(buff, strlen(buff)));
+        print_node_as_value(harp_eval_string(buff, strlen(buff)));
+        printf("\n");
     }
 }
 
