@@ -152,7 +152,9 @@ bool ast_basic_s_expr_test(char* os){
     harp_lexer_t lex = harp_create_lexer(buff, strlen(buff));
     harp_node_t* ast = harp_get_node(&lex);
 
-    return false;
+    if (ast->child == NULL) return false;
+
+    return true;
 }
 
 typedef bool (*harp_test_fn)(char* buff);
