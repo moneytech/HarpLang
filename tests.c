@@ -181,6 +181,24 @@ bool interp_basic_value(char* os) {
     return true;
 }
 
+bool interp_progn_test(char* os) {
+    //TODO(Dustin): implement
+
+    return false;
+}
+
+bool interp_expr_test(char* os) {
+    char buff[] = "(+ 1 2)";
+
+    harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+
+    if (!result) return false;
+    if (result->type != NT_REAL_LITERAL) return false;
+    if (result->value.number != (1 + 2)) return false;
+
+    return true;
+}
+
 typedef bool (*harp_test_fn)(char* buff);
 
 #ifndef HARP_MACROSTR
@@ -198,6 +216,8 @@ void harp_run_all_tests() {
         DEF_TEST(ast_basic_value_test),
         DEF_TEST(ast_basic_s_expr_test),
         DEF_TEST(interp_basic_value),
+        DEF_TEST(interp_progn_test),
+        DEF_TEST(interp_expr_test),
     };
     #undef DEF_TEST
 

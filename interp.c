@@ -1,5 +1,47 @@
 #include "interp.h"
 
+harp_node_t* eval_expr(harp_node_t* node);
+harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args);
+
+harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
+    // We have next->next
+    atom = eval_expr(atom);
+
+    if (atom->type != NT_ATOM) {
+        printf("illegal function call\n");
+        assert(0);
+    }
+
+    if (atom->value.string.len == 1){
+        switch(atom->value.string.data[0]) {
+            case '+': {
+                double acc = 0.0;
+                while (args) {
+                    harp_node_t* a = args;
+
+                    if (args->type == NT_EXPRESSION ||
+                        args->type == NT_PROGN) {
+                        a = eval_expr(args);
+                    }
+
+                    if (args->type != NT_REAL_LITERAL) {
+                        printf("cannot add a non numaric type %s\n", harp_node_type_names[args->type]);
+                    }
+
+                    acc += a->value.number;
+                    args = args->next;
+                }
+
+                harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
+                result->value.number = acc;
+                return result;
+            }
+        }
+    }
+
+    return NULL;
+}
+
 harp_node_t* eval_expr(harp_node_t* node) {
     switch(node->type) {
         case NT_ATOM: {
@@ -7,6 +49,25 @@ harp_node_t* eval_expr(harp_node_t* node) {
         }
         case NT_REAL_LITERAL: {
             return node;
+        }
+        case NT_PROGN: {
+            harp_node_t* it = eval_expr(node->child);
+            harp_node_t* last_v = NULL;
+
+            while (it) {
+                last_v = eval_expr(it);
+                it = it->next;
+            }
+
+            return last_v;
+        }
+        case NT_EXPRESSION: {
+            if (node->child == NULL) {
+                return harp_new_node(NT_LIST);
+            }
+
+            harp_node_t* first = node->child;
+            return eval_function(first, first->next);
         }
         default: { break; }
     }
