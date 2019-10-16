@@ -188,13 +188,30 @@ bool interp_progn_test(char* os) {
 }
 
 bool interp_expr_test(char* os) {
-    char buff[] = "(+ 1 2)";
 
-    harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+    {
+        char buff[] = "(+ (+ 1 2) 3)";
+        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        if (!result) return false;
+        if (result->type != NT_REAL_LITERAL) return false;
+        if (result->value.number != (1 + 2 + 3)) return false;
+    }
 
-    if (!result) return false;
-    if (result->type != NT_REAL_LITERAL) return false;
-    if (result->value.number != (1 + 2)) return false;
+    {
+        char buff[] = "(* 3 2)";
+        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        if (!result) return false;
+        if (result->type != NT_REAL_LITERAL) return false;
+        if (result->value.number != (3 * 2)) return false;
+    }
+
+    {
+        char buff[] = "(/ 3 2)";
+        harp_node_t* result = harp_eval_expr(buff, strlen(buff));
+        if (!result) return false;
+        if (result->type != NT_REAL_LITERAL) return false;
+        if (result->value.number != (1 / 2)) return false;
+    }
 
     return true;
 }

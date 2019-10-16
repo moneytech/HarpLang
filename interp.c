@@ -18,26 +18,70 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
                 double acc = 0.0;
                 while (args) {
                     harp_node_t* a = args;
-
-                    if (args->type == NT_EXPRESSION ||
-                        args->type == NT_PROGN) {
+                    if (args->type == NT_EXPRESSION || args->type == NT_PROGN)
                         a = eval_expr(args);
-                    }
-
-                    if (args->type != NT_REAL_LITERAL) {
+                    if (a->type != NT_REAL_LITERAL)
                         printf("cannot add a non numaric type %s\n", harp_node_type_names[args->type]);
-                    }
-
                     acc += a->value.number;
                     args = args->next;
                 }
-
+                harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
+                result->value.number = acc;
+                return result;
+            }
+            case '-': {
+                double acc = 0.0;
+                bool fst = false;
+                while (args) {
+                    harp_node_t* a = args;
+                    if (args->type == NT_EXPRESSION || args->type == NT_PROGN)
+                        a = eval_expr(args);
+                    if (a->type != NT_REAL_LITERAL)
+                        printf("cannot minus a non numaric type %s\n", harp_node_type_names[args->type]);
+                    if (!fst) acc += a->value.number;
+                    else { fst = false; acc = a->value.number; }
+                    args = args->next;
+                }
+                harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
+                result->value.number = acc;
+                return result;
+            }
+            case '*': {
+                double acc = 1.0;
+                while (args) {
+                    harp_node_t* a = args;
+                    if (args->type == NT_EXPRESSION || args->type == NT_PROGN)
+                        a = eval_expr(args);
+                    if (a->type != NT_REAL_LITERAL)
+                        printf("cannot multiple by a non numaric type %s\n", harp_node_type_names[args->type]);
+                    acc *= a->value.number;
+                    args = args->next;
+                }
+                harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
+                result->value.number = acc;
+                return result;
+            }
+            case '/': {
+                double acc = 0.0;
+                bool fst = false;
+                while (args) {
+                    harp_node_t* a = args;
+                    if (args->type == NT_EXPRESSION || args->type == NT_PROGN)
+                        a = eval_expr(args);
+                    if (a->type != NT_REAL_LITERAL)
+                        printf("cannot divide by a non numaric type %s\n", harp_node_type_names[args->type]);
+                    if (!fst) acc /= a->value.number;
+                    else { fst = false; acc = a->value.number; }
+                    args = args->next;
+                }
                 harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
                 result->value.number = acc;
                 return result;
             }
         }
     }
+
+#undef BIN_OP
 
     return NULL;
 }
