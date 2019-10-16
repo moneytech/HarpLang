@@ -16,6 +16,15 @@
 <empty>         ::= " ".
 */
 
+harp_node_t* harp_new_node(int type) {
+    harp_node_t* node = malloc(sizeof(harp_node_t));
+    if (!node) return NULL;
+
+    node->next = node->child = NULL;
+    node->type = type;
+    return node;
+}
+
 harp_str_t get_str_from_tok(harp_tok_t* tok) {
     harp_str_t result;
     result.data = malloc(tok->end-tok->start+1);
@@ -30,16 +39,12 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
     if (tok.type != TT_EOF) {
         switch(tok.type) {
             case TT_ATOM: {
-                harp_node_t* result = malloc(sizeof(result));
-                if (!result) return NULL;
-                result->type = TT_ATOM;
+                harp_node_t* result = harp_new_node(NT_ATOM);
                 result->value.atom = get_str_from_tok(&tok);
                 return result;
             }
             case TT_NUMBER: {
-                harp_node_t* result = malloc(sizeof(result));
-                if (!result) return NULL;
-                result->type = TT_NUMBER;
+                harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
                 char buff[256] = {'\0'};
                 sprintf(buff, "%.*s", (int)(tok.end-tok.start), tok.start);
                 result->value.number = atof(buff);
@@ -48,11 +53,19 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
             case TT_OPEN_BRACKET: {}
             case TT_CLOSE_BRACKET: {}
             case TT_OPEN_PAREN: {
-                harp_node_t* result = malloc(sizeof(harp_node_t));
-                if (!result) return NULL;
-
-                harp_node_t* lst = NULL;
-                harp_node_t* fst = NULL;
+                harp_node_t* result = harp_new_node(NT_EXPRESSION);
+                harp_node_t *lst = NULL, *fst = NULL;
+                while (1) {
+                    harp_node_t* v = parse_s_expr(lex);
+                    if (!v) break;
+                    if (!lst) { lst = v; fst = lst; }
+                    else {
+                        lst->next = v;
+                        lst = v;
+                    }
+                }
+                result->child = fst;
+                return result;
             }
             case TT_CLOSE_PAREN: {
                 return NULL;
@@ -77,9 +90,10 @@ harp_node_t* harp_get_node(harp_lexer_t* lex) {
 
     while (1) {
         harp_node_t* val = parse_s_expr(lex);
-        if (!val || lex->it == lex->end) break;
+        if (!val) break;
         next->next = val;
         next = next->next;
+        if (lex->it == lex->end) break;
     }
 
     return result;

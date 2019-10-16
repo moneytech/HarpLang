@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "lexer.h"
+#include "ast.h"
 
 #define ARROW ("└──")
 
@@ -133,6 +134,27 @@ bool lexer_atom_test(char* os){
     return true;
 }
 
+bool ast_basic_value_test(char* os){
+    char buff[] = "1 2 3";
+    harp_lexer_t lex = harp_create_lexer(buff, strlen(buff));
+    harp_node_t* ast = harp_get_node(&lex);
+
+    if (ast == NULL) return false;
+    if (ast->child == NULL) return false;
+    if (ast->child->next == NULL) return false;
+    if (ast->child->next->next == NULL) return false;
+
+    return true;
+}
+
+bool ast_basic_s_expr_test(char* os){
+    char buff[] = "(1 2 (3 (32 2) 4) 5)";
+    harp_lexer_t lex = harp_create_lexer(buff, strlen(buff));
+    harp_node_t* ast = harp_get_node(&lex);
+
+    return false;
+}
+
 typedef bool (*harp_test_fn)(char* buff);
 
 #ifndef HARP_MACROSTR
@@ -147,6 +169,8 @@ void harp_run_all_tests() {
         DEF_TEST(lexer_number_test),
         DEF_TEST(lexer_paren_test),
         DEF_TEST(lexer_atom_test),
+        DEF_TEST(ast_basic_value_test),
+        DEF_TEST(ast_basic_s_expr_test),
     };
     #undef DEF_TEST
 
