@@ -33,14 +33,8 @@ void print_node_as_value(harp_node_t* node) {
             break;
         }
         case NT_EXPRESSION: {
-            if (node->flags &= FLAG_QUOTED) {
-                node->type = NT_LIST;
-                print_node_as_value(node);
-                return;
-            }
-
+            if (node->flags &= FLAG_QUOTED) node->type = NT_LIST;
             print_node_as_value(harp_eval_expr(node));
-
             break;
         }
         default: {
