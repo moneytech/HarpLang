@@ -9,14 +9,14 @@
 void print_node_as_value(harp_node_t* node) {
     if (!node) printf("nil");
     switch(node->type) {
-        case NT_REAL_LITERAL: {
-            printf("%f", node->value.number);
+
+        case NT_REAL_LITERAL: printf("%f", node->value.number);
             break;
-        }
-        case NT_ATOM: {
-            printf("%.*s", (int)node->value.string.len, node->value.string.data);
+        case NT_ATOM: printf("%.*s", (int)node->value.string.len, node->value.string.data);
             break;
-        }
+        case NT_BOOLEAN_LITERAL: printf("%s", node->value.boolean?"#t":"#f");
+            break;
+
         case NT_LIST: {
             if (!node->child) {
                 printf("()");

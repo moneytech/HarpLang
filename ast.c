@@ -73,6 +73,12 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
                 if (quoted) harp_quote(result);
                 return result;
             }
+            case TT_BOOLEAN: {
+                harp_node_t* result = harp_new_node(NT_BOOLEAN_LITERAL);
+                result->value.boolean = ((*tok.start) == 't')?1:0;
+                if (quoted) harp_quote(result);
+                return result;
+            }
             case TT_OPEN_BRACKET: {}
             case TT_CLOSE_BRACKET: {}
             case TT_OPEN_PAREN: {

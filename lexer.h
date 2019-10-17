@@ -19,16 +19,17 @@ typedef struct {
 #define HARP_MACROSTR(k) #k
 #endif//HARP_MACROSTR
 
-#define X_HARP_TOKEN_TYPES                      \
-        X(TT_ATOM)                              \
-        X(TT_OPEN_PAREN)                        \
-        X(TT_CLOSE_PAREN)                       \
-        X(TT_OPEN_BRACKET)                      \
-        X(TT_CLOSE_BRACKET)                     \
-        X(TT_NUMBER)                            \
-        X(TT_STRING)                            \
-        X(TT_QUOTE)                             \
-        X(TT_EOF)
+#define X_HARP_TOKEN_TYPES              \
+    X(TT_ATOM)                          \
+    X(TT_OPEN_PAREN)                    \
+    X(TT_CLOSE_PAREN)                   \
+    X(TT_OPEN_BRACKET)                  \
+    X(TT_CLOSE_BRACKET)                 \
+    X(TT_NUMBER)                        \
+    X(TT_STRING)                        \
+    X(TT_QUOTE)                         \
+    X(TT_BOOLEAN)                       \
+    X(TT_EOF) 
 
 enum harp_token_types {
 #define X(Enum) Enum,

@@ -85,6 +85,26 @@ harp_tok_t harp_get_tok(harp_lexer_t* lex) {
 
     {
         char* start = lex->it;
+
+        if (lex->it != lex->end) {
+            // Check for boolean literals
+            if (*lex->it == '#') {
+                ++lex->it;
+                if ((lex->it != lex->end) && ((*lex->it) == 'f' || *lex->it == 't')) {
+                        harp_tok_t res = (harp_tok_t) {
+                            .type = TT_BOOLEAN,
+                            .flags = 0,
+                            .start = lex->it, // either f or t, just deref to check
+                            .end = lex->it
+                        };
+                        lex->it++;
+                        return res;
+                    }
+            }
+        }
+
+        lex->it = start;
+
         while (lex->it != lex->end) {
             if (isspace(*lex->it)
                 || *lex->it == '('

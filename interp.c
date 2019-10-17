@@ -17,6 +17,11 @@ harp_node_t* harp_cdr(harp_node_t* list) {
     return result;
 }
 
+// Learn more about cons and cons cells, new data type?
+harp_node_t* harp_cons(harp_node_t* args) {
+    return args;
+}
+
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
     // We have next->next
     atom = eval_expr(atom);
@@ -98,6 +103,8 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
             return harp_car(args);
         } else if (strcmp(atom->value.string.data, "cdr") == 0) {
             return harp_cdr(args);
+        } else if (strcmp(atom->value.string.data, "cons") == 0) {
+            return harp_cons(args);
         }
     }
 
@@ -108,12 +115,14 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
 
 harp_node_t* eval_expr(harp_node_t* node) {
     switch(node->type) {
-        case NT_ATOM: {
+
+        // Literals
+        case NT_ATOM:
+        case NT_REAL_LITERAL:
+        case NT_BOOLEAN_LITERAL: {
             return node;
         }
-        case NT_REAL_LITERAL: {
-            return node;
-        }
+
         case NT_PROGN: {
             harp_node_t* it = eval_expr(node->child);
             harp_node_t* last_v = NULL;

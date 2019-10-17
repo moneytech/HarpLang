@@ -14,6 +14,7 @@
     X(NT_EXPRESSION)\
     X(NT_LIST)\
     X(NT_REAL_LITERAL)\
+    X(NT_BOOLEAN_LITERAL)\
     X(NT_ATOM)\
     X(NT_C_FUNCTION)\
     X(NT_LAMBDA)\
