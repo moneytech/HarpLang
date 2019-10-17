@@ -55,6 +55,7 @@ typedef struct harp_node_t {
     struct harp_node_t *child, *next;
 } harp_node_t;
 
+void harp_quote(harp_node_t* node);
 harp_node_t* harp_new_node(int type);
 harp_node_t* harp_get_node(harp_lexer_t* lex);
 

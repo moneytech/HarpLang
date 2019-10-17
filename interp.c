@@ -6,20 +6,23 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args);
 harp_node_t* harp_eval_expr(harp_node_t* node) { return eval_expr(node); }
 
 harp_node_t* harp_car(harp_node_t* list) {
-    return list->child;
+    return eval_expr(list->child);
 }
 
 harp_node_t* harp_cdr(harp_node_t* list) {
-    return list->child->next;
+    harp_node_t* result = harp_new_node(NT_LIST);
+    harp_node_t* first = eval_expr(list);
+    if (!first || !first->next) return result;
+    result->child = first->next;
+    return result;
 }
-
 
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
     // We have next->next
     atom = eval_expr(atom);
 
     if (atom->type != NT_ATOM) {
-        printf("illegal function call\n");
+        printf("illegal function call [%s]\n", harp_node_type_names[atom->type]);
         assert(0);
     }
 
@@ -89,6 +92,12 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
                 result->value.number = acc;
                 return result;
             }
+        }
+    } else {
+        if (strcmp(atom->value.string.data, "car") == 0) {
+            return harp_car(args);
+        } else if (strcmp(atom->value.string.data, "cdr") == 0) {
+            return harp_cdr(args);
         }
     }
 

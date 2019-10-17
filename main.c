@@ -18,23 +18,29 @@ void print_node_as_value(harp_node_t* node) {
             break;
         }
         case NT_LIST: {
-            harp_node_t* it = harp_car(node);
-            printf("(");
-            while (it) {
+            if (!node->child) {
+                printf("()");
+            } else {
+                harp_node_t* it = harp_car(node);
+                printf("(");
+                while (it) {
+                    if (node->flags &= FLAG_QUOTED)
+                        it->flags |= FLAG_QUOTED;
 
-                if (node->flags &= FLAG_QUOTED)
-                    it->flags |= FLAG_QUOTED;
-
-                print_node_as_value(it);
-                it = it->next;
-                if (it) { printf(" "); }
+                    print_node_as_value(it);
+                    it = it->next;
+                    if (it) { printf(" "); }
+                }
+                printf(")");
             }
-            printf(")");
             break;
         }
         case NT_EXPRESSION: {
             if (node->flags &= FLAG_QUOTED) node->type = NT_LIST;
-            print_node_as_value(harp_eval_expr(node));
+            harp_node_t *node_ev = node->flags & FLAG_QUOTED
+                ? node
+                : harp_eval_expr(node);
+            print_node_as_value(node_ev);
             break;
         }
         default: {

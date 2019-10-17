@@ -16,6 +16,20 @@
 <empty>         ::= " ".
 */
 
+void harp_quote(harp_node_t* node) {
+    // Recursively quote
+
+    node->flags |= FLAG_QUOTED;
+    if (node->type != NT_REAL_LITERAL &&
+        node->type != NT_ATOM) {
+        harp_node_t* it = node->child;
+        while (it) {
+            harp_quote(it);
+            it = it->next;
+        }
+    }
+}
+
 harp_node_t* harp_new_node(int type) {
     harp_node_t* node = malloc(sizeof(harp_node_t));
     if (!node) return NULL;
@@ -48,7 +62,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
             case TT_ATOM: {
                 harp_node_t* result = harp_new_node(NT_ATOM);
                 result->value.atom = get_str_from_tok(&tok);
-                if (quoted) result->flags |= FLAG_QUOTED;
+                if (quoted) harp_quote(result);
                 return result;
             }
             case TT_NUMBER: {
@@ -56,7 +70,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
                 char buff[256] = {'\0'};
                 sprintf(buff, "%.*s", (int)(tok.end-tok.start), tok.start);
                 result->value.number = atof(buff);
-                if (quoted) result->flags |= FLAG_QUOTED;
+                if (quoted) harp_quote(result);
                 return result;
             }
             case TT_OPEN_BRACKET: {}
@@ -74,7 +88,7 @@ harp_node_t* parse_s_expr(harp_lexer_t* lex) {
                     }
                 }
                 result->child = fst;
-                if (quoted) result->flags |= FLAG_QUOTED;
+                if (quoted) harp_quote(result);
                 return result;
             }
             case TT_CLOSE_PAREN: {
