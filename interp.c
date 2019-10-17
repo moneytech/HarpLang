@@ -2,7 +2,7 @@
 
 harp_node_t* eval_expr(harp_node_t* node);
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args);
-
+harp_node_t* harp_eq(harp_node_t* args);
 harp_node_t* harp_eval_expr(harp_node_t* node) { return eval_expr(node); }
 
 harp_node_t* harp_car(harp_node_t* list) {
@@ -20,6 +20,87 @@ harp_node_t* harp_cdr(harp_node_t* list) {
 // Learn more about cons and cons cells, new data type?
 harp_node_t* harp_cons(harp_node_t* args) {
     return args;
+}
+
+harp_node_t* harp_test(harp_node_t* args) {
+    harp_node_t* result = harp_new_node(NT_BOOLEAN_LITERAL);
+    args = eval_expr(args);
+    result->value.boolean = args->type == NT_REAL_LITERAL
+        ? args->value.number != 0
+        : ((args->type == NT_BOOLEAN_LITERAL)
+          ? args->value.boolean
+          : 0);
+    return result;
+}
+
+harp_node_t* harp_len(harp_node_t* list) {
+    assert(list->type == NT_LIST || list->type == NT_EXPRESSION);
+    int n = 0;
+    harp_node_t* it = list->child;
+    while (it) {
+        n++;
+        it = it->next;
+    }
+    harp_node_t* result = harp_new_node(NT_REAL_LITERAL);
+    result->value.number = n;
+    return result;
+}
+
+void harp_free(harp_node_t* node) {
+    if (node->type == NT_ATOM) {
+        free(node->value.string.data);
+        node->value.string.data = 0;
+    }
+
+    free(node);
+    node = NULL;
+}
+
+harp_node_t* harp_eq_ab(harp_node_t* a, harp_node_t* b) {
+    harp_node_t* result = harp_new_node(NT_BOOLEAN_LITERAL);
+    int res_bool = 0;
+    if (a->type != b->type) res_bool = 0;
+    if (a->type == NT_BOOLEAN_LITERAL)
+        res_bool = a->value.boolean == b->value.boolean;
+    else if (a->type == NT_REAL_LITERAL)
+        res_bool = a->value.number == b->value.number;
+    else if (a->type == NT_LIST || a->type == NT_EXPRESSION) {
+        harp_node_t* lena = harp_len(a);
+        harp_node_t* lenb = harp_len(b);
+        harp_node_t* cmp = harp_eq_ab(lena, lenb);
+        if (!cmp->value.boolean) {
+            res_bool = false;
+        }
+        else {
+            harp_node_t* ita = a->child;
+            harp_node_t* itb = b->child;
+            while (ita && itb) {
+
+                harp_node_t* cmp = harp_eq_ab(ita, itb);
+                res_bool = cmp->value.boolean;
+                harp_free(cmp);
+
+                if (!res_bool) break; 
+
+                ita = ita->next;
+                itb = itb->next;
+            }
+        }
+        harp_free(lena); harp_free(lenb); harp_free(cmp);
+        lena = lenb = cmp = NULL;
+    }
+    else {
+        printf("Cannot compare %s\n", harp_node_type_names[a->type]);
+        assert(0);
+    }
+    result->value.boolean = res_bool;
+    return result;
+}
+
+harp_node_t* harp_eq(harp_node_t* args) {
+    harp_node_t* a = eval_expr(args);
+    harp_node_t* b = eval_expr(args->next);
+    return harp_eq_ab(a, b);
 }
 
 harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
@@ -105,6 +186,25 @@ harp_node_t* eval_function(harp_node_t* atom, harp_node_t* args) {
             return harp_cdr(args);
         } else if (strcmp(atom->value.string.data, "cons") == 0) {
             return harp_cons(args);
+        } else if (strcmp(atom->value.string.data, "?") == 0) {
+            // TODO(Dustin): Debug crashing??
+            return harp_test(args);
+        } else if (strcmp(atom->value.string.data, "test") == 0) {
+            return harp_test(args);
+        } else if (strcmp(atom->value.string.data, "eq?") == 0) {
+            return harp_eq(args);
+        } else if (strcmp(atom->value.string.data, "==") == 0) {
+            return harp_eq(args);
+        } else if (strcmp(atom->value.string.data, "len") == 0) {
+            return harp_len(args);
+        } else if (strcmp(atom->value.string.data, "neq?") == 0) {
+            harp_node_t* res = harp_eq(args);
+            res->value.boolean = !res->value.boolean;
+            return res;
+        } else if (strcmp(atom->value.string.data, "!=") == 0) {
+            harp_node_t* res = harp_eq(args);
+            res->value.boolean = !res->value.boolean;
+            return res;
         }
     }
 
